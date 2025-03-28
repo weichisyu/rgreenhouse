@@ -46,7 +46,7 @@ server <- function(input, output, session) {
   output$text_value <- renderText(input$set_text_value)
 
   observeEvent(input$count_btn, {
-    sleep_reactive(TRUE)  # Indicate async task is running
+    sleep_reactive(TRUE)
     sleep_trigger(TRUE)
   })
 
