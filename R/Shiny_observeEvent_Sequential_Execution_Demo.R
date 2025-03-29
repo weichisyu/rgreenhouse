@@ -3,6 +3,7 @@ library(shiny)
 ui <- fluidPage(titlePanel("Shiny observeEvent Sequential Execution Demo"),
                 sidebarLayout(
                   sidebarPanel(
+                    textInput("set_text_value", "Set text value"),
                     actionButton("count_btn1", "Test1: step1 -> step2 -> step1 -> step2..."),
                     actionButton("count_btn2", "Test2: step1+step2 -> step1+step2..."),
                     actionButton("count_btn3", "Test3: step1 -> step2+step1 -> step2+step1..."),
@@ -12,7 +13,8 @@ ui <- fluidPage(titlePanel("Shiny observeEvent Sequential Execution Demo"),
                     h1(textOutput("timer")),
                     verbatimTextOutput("text_observeEvent_Test1",placeholder = TRUE),
                     verbatimTextOutput("text_observeEvent_Test2",placeholder = TRUE),
-                    verbatimTextOutput("text_observeEvent_Test3",placeholder = TRUE)
+                    verbatimTextOutput("text_observeEvent_Test3",placeholder = TRUE),
+                    verbatimTextOutput("text_value")
                   )
                 ))
 
@@ -53,7 +55,9 @@ server <- function(input, output, session) {
   t1 <- reactiveVal(0)
   t2 <- reactiveVal(0)
   t3 <- reactiveVal(0)
-  sleep_time <- 3
+  step1_sleep_time <- 3
+  step2_sleep_time <- 5
+  output$text_value <- renderText(input$set_text_value)
 
   #Test1, step1 -> step2 -> step1 -> step2...
   observeEvent(input$count_btn1, {
@@ -62,7 +66,7 @@ server <- function(input, output, session) {
     sleep_trigger1(TRUE)
   })
   observeEvent(sleep_trigger1(), {
-    for (i in 1:sleep_time){
+    for (i in 1:step1_sleep_time){
       Sys.sleep(1)
       t1(t1() + 1)
     }
@@ -72,7 +76,7 @@ server <- function(input, output, session) {
     sleep_trigger1(NULL)
   })
   observeEvent(sleep_trigger1(), {
-    for (i in 1:sleep_time){
+    for (i in 1:step2_sleep_time){
       Sys.sleep(1)
       t1(t1() + 1)
     }
@@ -89,7 +93,7 @@ server <- function(input, output, session) {
     sleep_trigger2(TRUE)
   })
   observeEvent(sleep_trigger2(), {
-    for (i in 1:sleep_time){
+    for (i in 1:step1_sleep_time){
       Sys.sleep(1)
       t2(t2() + 1)
     }
@@ -97,7 +101,7 @@ server <- function(input, output, session) {
     print("sleep_step1")
   })
   observeEvent(sleep_trigger2(), {
-    for (i in 1:sleep_time){
+    for (i in 1:step2_sleep_time){
       Sys.sleep(1)
       t2(t2() + 1)
     }
@@ -114,7 +118,7 @@ server <- function(input, output, session) {
     sleep_trigger3(TRUE)
   })
   observeEvent(sleep_trigger3(), {
-    for (i in 1:sleep_time){
+    for (i in 1:step1_sleep_time){
       Sys.sleep(1)
       t3(t3() + 1)
     }
@@ -124,7 +128,7 @@ server <- function(input, output, session) {
     sleep_trigger3(NULL)
   })
   observeEvent(sleep_trigger3(), {
-    for (i in 1:sleep_time){
+    for (i in 1:step2_sleep_time){
       Sys.sleep(1)
       t3(t3() + 1)
     }
