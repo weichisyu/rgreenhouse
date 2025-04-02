@@ -13,7 +13,8 @@ ui <- fluidPage(titlePanel("Shiny Asynchronous non-blocking input task button De
                   mainPanel(
                     verbatimTextOutput("session_detail"),
                     h1(textOutput("timer")),
-                    verbatimTextOutput("text_value")
+                    verbatimTextOutput("text_value"),
+                    verbatimTextOutput("sleep_status")
                   )
                 ))
 
@@ -69,6 +70,9 @@ server <- function(input, output, session) {
     start_sleep$invoke()
   })
 
+  output$sleep_status <- renderText(
+    start_sleep$status()
+  )
 }
 
 shinyApp(ui, server)
